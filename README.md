@@ -4,12 +4,22 @@
 
 I can't wait to date a chess piece. That's what the game is about, right?
 
+## collaboration instructions
+
+Clone this repo. An easy way is using Github Desktop.\
+You can also manually download the files as a .zip, but why?\
+After you have a copy on your computer, open Unity Hub.\
+Make sure the correct version of Unity is installed.\
+Using "Open -> Add Project from Disk", navigate to your new Hnefa folder.\
+Open it and click "Add Project".
+
 ## patch notes
 
 #### 26/05/2022
 
 Imported a basic FMOD setup. Added relevant stuff to the .gitignore.\
-Added a single dummy sound to the FMOD project to escape error messages.
+Added a single dummy sound to the FMOD project to escape error messages.\
+Added basic instructions to access a copy of the project + required Unity version.
 
 #### 25/05/2022
 Had the idea to make the readme very slightly better.\
