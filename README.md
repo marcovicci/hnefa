@@ -8,7 +8,7 @@ I can't wait to date a chess piece. That's what the game is about, right?
 
 #### 26/05/2022
 
-Imported a basic FMOD setup. Added relevant stuff to the .gitignore.
+Imported a basic FMOD setup. Added relevant stuff to the .gitignore.\
 Added a single dummy sound to the FMOD project to escape error messages.
 
 #### 25/05/2022
