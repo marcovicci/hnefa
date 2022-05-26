@@ -7,7 +7,7 @@ I can't wait to date a chess piece. That's what the game is about, right?
 ## collaboration instructions
 
 Clone this repo. Probably using
-[Github Desktop]https://desktop.github.com/
+[Github Desktop](https://desktop.github.com/)
 and the green button up top.\
 You can also manually download the files as a .zip, but why?\
 After you have a copy on your computer, open Unity Hub.\
