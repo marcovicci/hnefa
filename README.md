@@ -23,7 +23,7 @@ Removed external ChessGame package; turns out home-made code tastes better.\
 Added a Documentation folder for behind-the-scenes nonsense that still needs to be here.\
 Made the Github repo PUBLIC - hello world!
 
-New scene added: Hnefa Board!\
+New scene added: **Hnefa Board!**\
 Added prefabs for cells in the board, pieces, all sorts of wacky stuff.\
 Created a class for game pieces, and added Types for each character + one for all enemies.\
 ![Piece manager code](/Documentation/piecemanager.png)\
