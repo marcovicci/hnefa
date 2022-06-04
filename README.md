@@ -19,6 +19,10 @@ Open it and click "Add Project".
 
 #### 04/06/2022
 
+Removed external ChessGame package; turns out home-made code tastes better.\
+Added a Documentation folder for behind-the-scenes nonsense that still needs to be here in the repo.
+Made the Github repo PUBLIC - hello world!\
+
 New scene added: Hnefa Board!\
 Added prefabs for cells in the board, pieces, all sorts of wacky stuff.\
 Created a class for game pieces, and added Types for each character + one for all enemies.\
