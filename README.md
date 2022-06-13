@@ -25,6 +25,7 @@ Basic movement is implemented aside from taking pieces, but including mechanics 
 SingleCell class can now handle emptying itself of pieces and has bools for different cell types (throne, corner pieces, and cells where a death has occurred).\
 GameBoard is where the really exciting stuff is happening - just kidding, it's also pretty normal looking in there. But it does have a new enum to determine types of game cells that pieces can actually potentially move to.\
 Added a Resources folder and basic dummy code that will allow each piece to load its unique icon when that is placed in the Resources folder. Yay!\
+Next up: taking pieces, winning and losing.
 
 #### 04/06/2022
 
