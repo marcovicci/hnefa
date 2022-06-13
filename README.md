@@ -17,6 +17,15 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 13/06/2022
+
+Added some basic movement mechanics - pieces can now be dragged and dropped around and snap to our grid.\
+BasePiece class has some new functions to evaluate movement paths and that kind of thing. It also hooks into a bunch of drag events. Of course, these will later be triggered by internal AI instead of by player input directly. After a piece is moved successfully, control is automatically switched to the opposing side and those pieces become draggable.\
+Basic movement is implemented aside from taking pieces, but including mechanics like "only Jarls can land on the throne, but all pieces can pass over it."\
+SingleCell class can now handle emptying itself of pieces and has bools for different cell types (throne, corner pieces, and cells where a death has occurred).\
+GameBoard is where the really exciting stuff is happening - just kidding, it's also pretty normal looking in there. But it does have a new enum to determine types of game cells that pieces can actually potentially move to.\
+Added a Resources folder and basic dummy code that will allow each piece to load its unique icon when that is placed in the Resources folder. Yay!\
+
 #### 04/06/2022
 
 Removed external ChessGame package; turns out home-made code tastes better.\
