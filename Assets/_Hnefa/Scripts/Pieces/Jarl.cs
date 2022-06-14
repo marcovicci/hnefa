@@ -33,6 +33,26 @@ public class Jarl : BasePiece
       }
     }
 
+    public override void Move()
+    {
+
+      // Because this is the jarl, in addition to finishing up his move
+      // we need to check if it's time to win the game
+
+      if (CheckWin())
+      {
+
+        // Hooray! We win!
+        // Right now this just resets the game.
+        mPieceManager.ResetPieces();
+      }
+      else
+      {
+        // Just continue as normal
+        base.Move();
+      }
+    }
+
     public bool CheckSurrounded(int xDirection, int yDirection, int movement)
     {
 
@@ -54,6 +74,18 @@ public class Jarl : BasePiece
 
       return false;
 
+    }
+
+    public bool CheckWin()
+    {
+      //Function to quickly check if we've just moved onto a winning square.
+
+      if (MatchesState(mTargetCell.mBoardPosition.x, mTargetCell.mBoardPosition.y, CellState.Win))
+      {
+        return true;
+      }
+
+      return false;
     }
 
 

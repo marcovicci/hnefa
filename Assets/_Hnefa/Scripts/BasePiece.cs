@@ -120,7 +120,7 @@ public class BasePiece : EventTrigger
         // Here comes a special boy!
         // Disgusting nested if statement thing. Please forgive me.
         // Since the immediate closest cell has an enemy, we need to check
-        // if the cell after that has a friend.
+        // if the cell after that has a friend or is a corner piece/throne.
         //Let's also store this cell somewhere so that if we have to take it, it's easy to do so.
         SingleCell mCellStorage = mCurrentCell.mBoard.mAllCells[currentX,currentY];
 
@@ -132,6 +132,10 @@ public class BasePiece : EventTrigger
         (MatchesState(currentX,currentY, CellState.Friendly) && this.mColor == Color.white)
         || // are you tired of me making this joke yet
         (MatchesState(currentX,currentY, CellState.Enemy) && this.mColor == Color.black)
+        ||
+        MatchesState(currentX,currentY, CellState.Win)
+        ||
+        MatchesState(currentX,currentY, CellState.Throne)
         )
         {
           // Cool, both these things are a match so let's take the enemy piece.
@@ -182,9 +186,13 @@ public class BasePiece : EventTrigger
         }
 
         // If this piece will only be moveable to our jarl we should do a bit of additional checking.
-        if (mCellState == CellState.Win && mIsKing == false)
+        if (mCellState == CellState.Win)
         {
-          break;
+          if (mIsKing == false)
+          {
+            break;
+          }
+          mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX,currentY]);
         }
 
         if (mCellState == CellState.Throne)
@@ -253,7 +261,7 @@ public class BasePiece : EventTrigger
       mHighlightedCells.Clear();
     }
 
-    protected void Move()
+    public virtual void Move()
     {
       // Handles moving a piece to a new cell on the board.
       // Updates the current cell to be empty, then swaps to the target cell.

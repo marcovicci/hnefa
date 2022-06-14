@@ -20,10 +20,11 @@ Open it and click "Add Project".
 #### 14/06/2022
 
 You can now take pieces by sandwiching them! In order to take the jarl you have to surround him on all four sides.\
+You can win by getting the jarl to a corner, or lose by having him die. Right now this just restarts the game.\
 New function in BasePiece to check cell states against a target, to assist with our functions for taking pieces.\
 New function in BasePiece to check if an enemy piece has been sandwiched and initiate its Kill() function.\
 The jarl has his own function to check if he is actually surrounded before running Kill(). He can be surrounded by 4 enemy pieces or by 3 enemy pieces and the throne.\
-Kill() also tells the cell in which it occurred that somebody died there.
+Kill() also tells the cell in which it occurred that somebody died there.\
 
 #### 13/06/2022
 
