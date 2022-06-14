@@ -20,8 +20,41 @@ public class Jarl : BasePiece
     // We have to override the Kill() function as well, just to make sure killing the Jarl is a loss
     public override void Kill()
     {
-      base.Kill();
 
-      mPieceManager.mIsKingAlive = false;
+      if (CheckSurrounded(1, 0, mMovement.x)
+      && CheckSurrounded(-1, 0, mMovement.x)
+      && CheckSurrounded(0, 1, mMovement.y)
+      && CheckSurrounded(0, -1, mMovement.y))
+      {
+        // King is surrounded so we run the base Kill here
+        base.Kill();
+
+        mPieceManager.mIsKingAlive = false;
+      }
     }
+
+    public bool CheckSurrounded(int xDirection, int yDirection, int movement)
+    {
+
+      // While we're here, let's give the Jarl a special function
+      // for determining if it's time for him to cark it or not
+      // Since the jarl needs to be surrounded on all four sides!
+
+      int currentX = mCurrentCell.mBoardPosition.x;
+      int currentY = mCurrentCell.mBoardPosition.y;
+
+      currentX += xDirection;
+      currentY += yDirection;
+
+      // the jarl can either be surrounded by 4 enemies, or 3 enemies and a throne
+      if (MatchesState(currentX,currentY, CellState.Enemy) || MatchesState(currentX,currentY, CellState.Throne))
+      {
+        return true;
+      }
+
+      return false;
+
+    }
+
+
 }

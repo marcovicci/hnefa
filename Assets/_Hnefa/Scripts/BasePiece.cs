@@ -57,8 +57,10 @@ public class BasePiece : EventTrigger
     {
       // Handles removing this piece from play.
       // Clears data for the current cell (so it knows it's empty) and removes this gameObject.
+      // Also says somebody died here.
 
       mCurrentCell.mCurrentPiece = null;
+      mCurrentCell.mDeathHappenedHere = true;
       gameObject.SetActive(false);
     }
 
@@ -70,9 +72,82 @@ public class BasePiece : EventTrigger
       Place(mOriginalCell);
     }
 
+    public bool MatchesState(int targetX, int targetY, CellState targetState)
+    {
+      // Starting to implement taking pieces.
+      // If we pass this function an x/y location on the board, as well as a state,
+      // it just returns whether that location matches that state.
+      // But this is important, because to take a piece, one cell over has to contain an enemy,
+      // and one cell over from that has to contain a friendly piece.
+
+      CellState mCellState = CellState.None;
+      mCellState = mCurrentCell.mBoard.ValidateCell(targetX, targetY);
+
+      if (mCellState == targetState)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    public void CheckTaking(int xDirection, int yDirection, int movement)
+    {
+      // Function to be called when a piece has moved to see if any pieces will be taken.
+      // Shares many pieces with CreateCellPath but not all of them.
+      // Could probably rewrite CreateCellPath to have a special case for when we only want to determine
+      // if we're taking a piece... but why?
+
+      int currentX = mCurrentCell.mBoardPosition.x;
+      int currentY = mCurrentCell.mBoardPosition.y;
+
+      currentX += xDirection;
+      currentY += yDirection;
+
+      // Like CheckPathing we want to check the states of surrounding cells,
+      // but it actually only matters if the *immediately* surrounding cells
+      // are occupied. So we don't need a loop here yet.
+
+      // this next statement only needs to trigger if the cell is occupied
+      // by the opposite piece
+      if (
+      // I LOVE A GOOD NESTED PARENTHESIS
+      (MatchesState(currentX,currentY, CellState.Friendly) && this.mColor == Color.black)
+      || // this is a load bearing "or" operator
+      (MatchesState(currentX,currentY, CellState.Enemy) && this.mColor == Color.white)
+      )
+      {
+        // Here comes a special boy!
+        // Disgusting nested if statement thing. Please forgive me.
+        // Since the immediate closest cell has an enemy, we need to check
+        // if the cell after that has a friend.
+        //Let's also store this cell somewhere so that if we have to take it, it's easy to do so.
+        SingleCell mCellStorage = mCurrentCell.mBoard.mAllCells[currentX,currentY];
+
+        currentX += xDirection;
+        currentY += yDirection;
+
+        if (
+        // I LOVE A GOOD NESTED PARENTHESIS
+        (MatchesState(currentX,currentY, CellState.Friendly) && this.mColor == Color.white)
+        || // are you tired of me making this joke yet
+        (MatchesState(currentX,currentY, CellState.Enemy) && this.mColor == Color.black)
+        )
+        {
+          // Cool, both these things are a match so let's take the enemy piece.
+          // We already stored the cell above so we can just run our nonsense on it now. Yay.
+          mCellStorage.RemovePiece();
+        }
+
+      }
+    }
+
     public void IsKing()
     {
       // A simple function allowing the jarl to be differentiated on setup.
+      // Definitely didn't need a separate function for this, to be honest.
+      // But what if the jarl ends up requiring more alterations to this class?
+      // So it's staying.
       mIsKing = true;
     }
 
@@ -190,6 +265,18 @@ public class BasePiece : EventTrigger
 
       transform.position = mCurrentCell.transform.position;
       mTargetCell = null;
+
+      // New component here - running the CheckTaking function to see if any pieces need to die now.
+      // Just like CreateCellPath we run this four times, which is a little silly, but frankly
+      // it's less silly than trying to accomodate for all these directions inside of CheckTaking().
+
+      // Horizontal movement
+      CheckTaking(1, 0, mMovement.x);
+      CheckTaking(-1, 0, mMovement.x);
+
+      // Vertical movement
+      CheckTaking(0, 1, mMovement.y);
+      CheckTaking(0, -1, mMovement.y);
     }
 
     public override void OnBeginDrag(PointerEventData eventData)

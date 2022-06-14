@@ -58,7 +58,7 @@ public class SingleCell : MonoBehaviour
     public void RemovePiece()
     {
       // Very simple function to destroy the piece in this cell.
-      // Using this we can later allow pieces to be taken and also lead into more complex death events.
+      // Using this we can allow pieces to be taken and also lead into more complex death events.
 
       if (mCurrentPiece != null)
       {
