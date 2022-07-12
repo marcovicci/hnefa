@@ -7,13 +7,22 @@ public class PieceManager : MonoBehaviour
 {
     // here be references
     public GameObject mPiecePrefab;
+    public GameObject mDirector;
+    public GameObject mGameBoard;
 
     // How's the jarl doing? Is he OK? Nothing else matters if he isn't.
     public bool mIsKingAlive = true;
+    
+    // On the other hand, is he in a corner already?
+    public bool mIsKingFree = false;
 
     // Lists for pieces
     public BasePiece[] mWhitePieces = new BasePiece[121];
     public BasePiece[] mBlackPieces = new BasePiece[121];
+
+    // This next one is weird - it's storing the white pieces, black pieces and cells.
+    // In theory we can use this to roll back to previous states and build the board from there.
+    public List<(BasePiece[], BasePiece[], SingleCell[,])> mBoardHistory;
 
     // Our whole starting board layout in an array. 121 cells! Good God.
     // Subject to change when Matthew decides where characters start.
@@ -118,6 +127,7 @@ public class PieceManager : MonoBehaviour
           if (thisTeam[i] != null)
           {
             thisTeam[i].Place(mBoard.mAllCells[x, y]);
+            thisTeam[i].mArrayPosition = i;
           }
           i++;
         }
@@ -165,8 +175,11 @@ public class PieceManager : MonoBehaviour
 
     public void ResetPieces()
     {
-      // Goes through and moves all the pieces on each team back to their starting position.
+      // Re-initialize pieces in each team.
+      mWhitePieces = CreatePieces(Color.white, new Color32(80,124,159,255), mGameBoard.GetComponent<GameBoard>());
+      mBlackPieces = CreatePieces(Color.black, new Color32(210,95,64,255), mGameBoard.GetComponent<GameBoard>());
 
+      // Goes through and moves all the pieces on each team back to their starting position.
       foreach (BasePiece piece in mWhitePieces)
             if (piece != null)
             {

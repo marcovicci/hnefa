@@ -15,6 +15,10 @@ public class BasePiece : EventTrigger
     // Variables happen now.
     public Color mColor = Color.clear;
     public bool mIsKing = false;
+    public int mArrayPosition;
+
+    // New variable - is this a real piece or simulated?
+    public bool mIsVirtual = false;
 
     // Starting position and current position, also our own RectTransform again
     public SingleCell mOriginalCell = null;
@@ -26,7 +30,7 @@ public class BasePiece : EventTrigger
     // move the pieces, even though this will never be done in-game.
     // So I will be starting with Andrew Connell's system to drag pieces around the board.
     protected Vector3Int mMovement = new Vector3Int(10, 10, 0);
-    protected List<SingleCell> mHighlightedCells = new List<SingleCell>();
+    public List<SingleCell> mHighlightedCells = new List<SingleCell>();
 
     // Later this will lead into a system for understanding possible moves per-piece.
     // It'll all make sense then. I promise.
@@ -62,6 +66,26 @@ public class BasePiece : EventTrigger
       mCurrentCell.mCurrentPiece = null;
       mCurrentCell.mDeathHappenedHere = true;
       gameObject.SetActive(false);
+
+      // In addition we need to actually remove this piece from the active pieces list. 
+      // Don't panic. We know where this piece is in whatever its respective list is due to the mArrayPosition variable.
+      // So we can set the piece at that position in the list to null.
+      if (!mIsVirtual && mColor == Color.black) 
+      {
+        mPieceManager.mBlackPieces[mArrayPosition] = null;
+      }
+      if (!mIsVirtual && mColor == Color.white) 
+      {
+        mPieceManager.mWhitePieces[mArrayPosition] = null;
+      }
+      if (mIsVirtual && mColor == Color.white) 
+      {
+        mPieceManager.mDirector.GetComponent<Simulator>().mVirtualWhite[mArrayPosition] = null;
+      }
+      if (mIsVirtual && mColor == Color.black) 
+      {
+        mPieceManager.mDirector.GetComponent<Simulator>().mVirtualBlack[mArrayPosition] = null;
+      }
     }
 
     public void Reset()
@@ -215,7 +239,7 @@ public class BasePiece : EventTrigger
       }
     }
 
-    protected void CheckPathing()
+    public void CheckPathing()
     {
       // This is actually what is calling that function above.
       // It's a little ugly but works fine.

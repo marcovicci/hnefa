@@ -28,8 +28,15 @@ public class Jarl : BasePiece
       {
         // King is surrounded so we run the base Kill here
         base.Kill();
-
-        mPieceManager.mIsKingAlive = false;
+        
+        if (!mIsVirtual) 
+        {
+          mPieceManager.mIsKingAlive = false;
+        }
+        else 
+        {
+          mPieceManager.mDirector.GetComponent<Simulator>().mIsKingAlive = false;
+        }
       }
     }
 
@@ -43,12 +50,22 @@ public class Jarl : BasePiece
       {
 
         // Hooray! We win!
-        // Right now this just resets the game.
-        mPieceManager.ResetPieces();
+        // Right now this just resets the game if the king isn't a simulated piece. 
+        if (!mIsVirtual) 
+        {
+          mPieceManager.mIsKingFree = true;
+          mPieceManager.ResetPieces();
+        }
+        else 
+        {
+          mPieceManager.mDirector.GetComponent<Simulator>().mIsKingFree = true;
+        }
       }
       else
       {
-        // Just continue as normal
+        // Just continue as normal.
+        // We should also send our position to the Simulator. 
+        mPieceManager.mDirector.GetComponent<Simulator>().mKingPos = new Vector2Int(mCurrentCell.mBoardPosition.x, mCurrentCell.mBoardPosition.y);
         base.Move();
       }
     }
