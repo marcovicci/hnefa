@@ -21,7 +21,7 @@ Open it and click "Add Project".
 
 Added a new class - Simulator - for making and evaluating theoretical moves on a virtual fake game board. A lot of the code is reused from elsewhere and it's a little silly. But trust me, it will work!\
 Added a Board History variable... list... tuple? Whatever it is, it can store current positions of pieces for each team and states of all the cells on the board. In theory, this means the AI will be able to roll back from potential moves and build the board at any state of play using that data. This is used in PieceManager and our new Simulator class.\
-Pieces can now be "virtual" so that the movement of simulated pieces won't trigger real game board changes.\ 
+Pieces can now be "virtual" so that the movement of simulated pieces won't trigger real game board changes.\
 The Jarl will send some information about his states to the Simulator, since this is pretty important to scoring. (Other pieces will also do this, once the emotional system is more present.)\
 In general, I'm laying the groundwork for the minimax system we'll be using for AI decisionmaking. Stay tuned for more...
 
