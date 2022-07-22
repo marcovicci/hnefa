@@ -17,6 +17,10 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 23/07/2022
+
+Branches are a thing now. Each coder will have their own branch, *development-XX* (where XX is their initials.)
+
 #### 12/07/2022
 
 Added a new class - Simulator - for making and evaluating theoretical moves on a virtual fake game board. A lot of the code is reused from elsewhere and it's a little silly. But trust me, it will work!\
