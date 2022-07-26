@@ -1,13 +1,14 @@
 # Hnefa
 
 #### Unity version: 2021.3.2f1
-[Click here to install this version of Unity.](unityhub://2021.3.2f1/d6360bedb9a0)
+Copy and paste this into your browser to install in Unity Hub:\
+#### unityhub://2021.3.2f1/d6360bedb9a0
 
 I can't wait to date a chess piece. That's what the game is about, right?
 
 ## collaboration instructions
 
-Install Unity Hub, and add the correct version of Unity by clicking the link above.\
+Install Unity Hub, and add the correct version of Unity using the link above.\
 Clone this repo. Probably using
 [Github Desktop](https://desktop.github.com/)
 and the green button up top.\
