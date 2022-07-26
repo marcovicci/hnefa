@@ -1,6 +1,7 @@
 # Hnefa
 
-### Unity version: 2021.3.2f1 - [Direct Installation Link](unityhub://2021.3.2f1/d6360bedb9a0)
+#### Unity version: 2021.3.2f1
+[Click here to install this version of Unity.](unityhub://2021.3.2f1/d6360bedb9a0)
 
 I can't wait to date a chess piece. That's what the game is about, right?
 
