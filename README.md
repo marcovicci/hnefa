@@ -1,11 +1,12 @@
 # Hnefa
 
-#### Unity version: 2021.3.2f1
+### Unity version: 2021.3.2f1 - [Direct Installation Link](unityhub://2021.3.2f1/d6360bedb9a0)
 
 I can't wait to date a chess piece. That's what the game is about, right?
 
 ## collaboration instructions
 
+Install Unity Hub, and add the correct version of Unity by clicking the link above.\
 Clone this repo. Probably using
 [Github Desktop](https://desktop.github.com/)
 and the green button up top.\
@@ -16,6 +17,11 @@ Using "Open -> Add Project from Disk", navigate to your new Hnefa folder.\
 Open it and click "Add Project".
 
 ## patch notes
+
+#### 26/07/2022
+
+Removed FMOD. I was silly for including it and it'll make things more complicated for no reason, like whenever I become obsessed with reinstalling Linux. I apologize for my silliness.\
+Added a direct link to get the correct version of Unity to these instructions. 
 
 #### 23/07/2022
 
