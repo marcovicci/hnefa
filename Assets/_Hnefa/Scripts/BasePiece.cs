@@ -20,6 +20,14 @@ public class BasePiece : EventTrigger
     // New variable - is this a real piece or simulated?
     public bool mIsVirtual = false;
 
+    // EASA variables
+    public int[] mCurrentEASA = new int[4];
+    public int mTotalVariance;
+
+    // What format will the narrative state take?
+    // It's an int for now because why not.
+    public int mNarrativeState;
+
     // Starting position and current position, also our own RectTransform again
     public SingleCell mOriginalCell = null;
     public SingleCell mCurrentCell = null;
@@ -382,5 +390,47 @@ public class BasePiece : EventTrigger
         mPieceManager.SwitchSides(mColor);
       }
 
+    }
+
+    // Calculating total variance for this piece
+    public int CalculateVariance()
+    {
+        // Reset total variance to zero
+        mTotalVariance = 0;
+
+        foreach(int emotion in mCurrentEASA)
+        {
+            // Add absolute value of each emotion
+            Debug.Log(Mathf.Abs(emotion));
+            mTotalVariance += Mathf.Abs(emotion);
+        }
+
+        return mTotalVariance;
+    }
+
+    public void SelectNewSpot(string mode="random")
+    {
+      if (mode == "random")
+      {
+        // set some defaults
+        int max = 1;
+        mTargetCell = null;
+
+        CheckPathing();
+
+        foreach (SingleCell cell in mHighlightedCells)
+        {
+          int currentRandom = UnityEngine.Random.Range(1,1000);
+          if (currentRandom > max) 
+          {
+            // put this as the new maximum
+            max = currentRandom;
+            mTargetCell = cell;
+          }
+        }
+
+        Move();
+
+      }
     }
 }
