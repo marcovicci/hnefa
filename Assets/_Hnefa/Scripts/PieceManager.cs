@@ -20,6 +20,9 @@ public class PieceManager : MonoBehaviour
     public BasePiece[] mWhitePieces = new BasePiece[121];
     public BasePiece[] mBlackPieces = new BasePiece[121];
 
+    // Current piece to move
+    public BasePiece mReadyPiece;
+
     // This next one is weird - it's storing the white pieces, black pieces and cells.
     // In theory we can use this to roll back to previous states and build the board from there.
     public List<(BasePiece[], BasePiece[], SingleCell[,])> mBoardHistory;
@@ -190,5 +193,64 @@ public class PieceManager : MonoBehaviour
             {
               piece.Reset();
             }
+    }
+
+    public void PickAlliedPiece()
+    {
+      int[] mPieceVariance = new int[121];
+      mReadyPiece = null;
+
+      // Function to choose the next white piece to move.
+      for (int i = 0; i < mWhitePieces.Length; i++)
+      {
+        if (mWhitePieces[i] != null)
+        {
+          mPieceVariance[i] = mWhitePieces[i].CalculateVariance();
+        }
+      }
+
+      int currentPiece = FindMaxVariance(mPieceVariance);
+
+      mReadyPiece = mWhitePieces[currentPiece];
+    }
+
+    public void PickEnemyPiece()
+    {
+      int max = 1;
+      mReadyPiece = null;
+  
+      // Function to choose the next black piece to move.
+      for (int i = 0; i < mBlackPieces.Length; i++)
+      {
+        if (mBlackPieces[i] != null)
+        {
+          int currentRandom = UnityEngine.Random.Range(1,1000);
+          if (currentRandom > max) 
+          {
+            // put this as the new maximum
+            max = currentRandom;
+            mReadyPiece = mBlackPieces[i];
+          }
+        }
+      }
+    }
+
+    public int FindMaxVariance(int[] intArray)
+    {
+      // set some defaults
+      int max = intArray[0];
+      int currentPiece = 0;
+
+      for (int i = 0; i < intArray.Length; i++)
+      {
+        if (intArray[i] > max) 
+        {
+          // put this as the new maximum
+          max = intArray[i];
+          currentPiece = i;
+        }
+      }
+      // return the position of the maximum variance piece
+      return currentPiece;
     }
 }

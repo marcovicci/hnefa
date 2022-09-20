@@ -19,6 +19,23 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 20/09/2022
+Long time no see!
+
+Added to BasePiece class:\
+mCurrentEASA variable, which is four integers (of course) in an array. mTotalVariance integer and CalculateVariance() function to return the total emotional variance of this piece.\
+SelectNewSpot() function with a default "random mode" that just randomly picks a cell to move to.
+
+Added to PieceManager class:\
+PickAlliedPiece() and FindMaxVariance() functions that can go through all living allied pieces, call CalculateVariance() on each, determine the highest value and select that piece.\
+PickEnemyPiece() that just rolls the dice on each piece to pick somebody who should move.\
+
+Added dummy scenes (with a canvas and event system but currently nothing else):\
+DialogueWindow\
+OptionsMenu\
+EndingScreen\
+Tutorial
+
 #### 26/07/2022
 
 Removed FMOD. I was silly for including it and it'll make things more complicated for no reason, like whenever I become obsessed with reinstalling Linux. I apologize for my silliness.\
