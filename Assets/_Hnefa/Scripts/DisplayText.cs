@@ -38,4 +38,9 @@ public class DisplayText : MonoBehaviour
         // "The Jarl looks guilty."
         mTextHistory.Add("The " + speakingCharacter + " looks" + newEmotion ".");
     }
+
+    public void ClearConversationHistory()
+    {
+        List<string> mTextHistory = new List<string>();
+    }
 }
