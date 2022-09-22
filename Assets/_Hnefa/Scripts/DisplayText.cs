@@ -12,14 +12,14 @@ public class DisplayText : MonoBehaviour
     {
         // Passing this the arguments 'hello', 'Jarl' would result in... 
         // 'The Jarl: hello'
-        mTextHistory.Add("The "speakingCharacter + " : " + newText);
+        mTextHistory.Add("The " + speakingCharacter + " : " + newText);
     }
 
     public void AddRavenSpeak(string newText, string speakingCharacter)
     {
         // Passing this the arguments 'hello', 'Jarl' would result in...
         // 'The Raven, in the voice of the Jarl: hello'
-        mTextHistory.Add("The Raven, in the voice of the "speakingCharacter + ": " + newText);
+        mTextHistory.Add("The Raven, in the voice of the " + speakingCharacter + ": " + newText);
     }
 
     public void ConversationStarter(string speakingCharacter)
@@ -36,7 +36,7 @@ public class DisplayText : MonoBehaviour
         // "***"
         // ...presumably followed by the next conversation beginning
         mTextHistory.Add("The conversation with the " + speakingCharacter + " ends.");
-        mTextHistory.Add("***")
+        mTextHistory.Add("***");
     }
 
     public void EmotionChange(string speakingCharacter, string newEmotion)
@@ -44,7 +44,7 @@ public class DisplayText : MonoBehaviour
         // You may or may not want to use this one but it could be neat.
         // Since we're working with programmer art right now, why not have some text indication of changing emotions?
         // "The Jarl looks guilty."
-        mTextHistory.Add("The " + speakingCharacter + " looks" + newEmotion ".");
+        mTextHistory.Add("The " + speakingCharacter + " looks" + newEmotion + ".");
     }
 
     public void ClearConversationHistory()
