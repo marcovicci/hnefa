@@ -10,8 +10,16 @@ public class DisplayText : MonoBehaviour
 
     public void AddText(string newText, string speakingCharacter)
     {
-        // Passing this the arguments 'hello', 'Jarl' would result in adding 'Jarl: hello' to the list
-        mTextHistory.Add(speakingCharacter + ": " + newText);
+        // Passing this the arguments 'hello', 'Jarl' would result in... 
+        // 'The Jarl: hello'
+        mTextHistory.Add("The "speakingCharacter + " : " + newText);
+    }
+
+    public void AddRavenSpeak(string newText, string speakingCharacter)
+    {
+        // Passing this the arguments 'hello', 'Jarl' would result in...
+        // 'The Raven, in the voice of the Jarl: hello'
+        mTextHistory.Add("The Raven, in the voice of the "speakingCharacter + ": " + newText);
     }
 
     public void ConversationStarter(string speakingCharacter)
