@@ -19,6 +19,13 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 19/10/2022
+
+Added sprites, death icons and regular icons for all board pieces.\
+Added faces for various emotional states.\
+Bird piece is in. Clicking on it will allow you to move it to various allied pieces until its energy runs out.\
+Continuing work on the dialogue system.
+
 #### 20/09/2022
 Long time no see!
 
