@@ -17,4 +17,24 @@ public class Director : MonoBehaviour
       //Setup pieces
       mPieceManager.Setup(mBoard);
     }
+
+    public void TakeAlliedMove(string mode="random")
+    {
+      if (mode == "random")
+      {
+        // code for random allied piece selection
+        mPieceManager.PickRandomAlliedPiece();
+      }
+
+      else
+      {
+        // ... code for non-random piece selection based on variance
+        mPieceManager.PickAlliedPiece();
+      }
+    }
+
+    public void TakeEnemyMove()
+    {
+      mPieceManager.PickEnemyPiece();
+    }
 }

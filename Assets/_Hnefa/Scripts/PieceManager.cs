@@ -7,6 +7,7 @@ public class PieceManager : MonoBehaviour
 {
     // here be references
     public GameObject mPiecePrefab;
+    public GameObject mBirdPrefab;
     public GameObject mDirector;
     public GameObject mGameBoard;
 
@@ -74,6 +75,21 @@ public class PieceManager : MonoBehaviour
       // Saying who goes first - in the case of fetlar hnefatafl it's the attackers.
       // Due to black magic we are passing in the allied color though. Don't worry about it, just read on.
       SwitchSides(Color.white);
+
+    }
+
+    public void MakeBird(BasePiece jarl)
+    {
+      // Placing the raven piece and giving it awareness of the jarl. 
+
+      GameObject newPieceObject = Instantiate(mBirdPrefab);
+      newPieceObject.transform.SetParent(transform);
+
+      // scale and positioning nonsense
+      newPieceObject.transform.localScale = new Vector3(1,1,1);
+      newPieceObject.transform.localRotation = Quaternion.identity;
+
+      newPieceObject.GetComponent<Bird>().Setup(this, jarl);
 
     }
 
@@ -212,6 +228,31 @@ public class PieceManager : MonoBehaviour
       int currentPiece = FindMaxVariance(mPieceVariance);
 
       mReadyPiece = mWhitePieces[currentPiece];
+
+      mReadyPiece.SelectNewSpot("random", "allied");
+    }
+
+    public void PickRandomAlliedPiece()
+    {
+      int max = 1;
+      mReadyPiece = null;
+  
+      // Function to choose the next black piece to move.
+      for (int i = 0; i < mWhitePieces.Length; i++)
+      {
+        if (mWhitePieces[i] != null)
+        {
+          int currentRandom = UnityEngine.Random.Range(1,1000);
+          if (currentRandom > max) 
+          {
+            // put this as the new maximum
+            max = currentRandom;
+            mReadyPiece = mWhitePieces[i];
+          }
+        }
+      }
+
+      mReadyPiece.SelectNewSpot("random", "allied");
     }
 
     public void PickEnemyPiece()
@@ -233,6 +274,8 @@ public class PieceManager : MonoBehaviour
           }
         }
       }
+
+      mReadyPiece.SelectNewSpot("random", "enemy");
     }
 
     public int FindMaxVariance(int[] intArray)
