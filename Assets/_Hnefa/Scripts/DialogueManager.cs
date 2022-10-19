@@ -8,8 +8,16 @@ public class DialogueManager : MonoBehaviour
     public int[] mCurrentEASA = new int[4];
     public GameObject CharacterPortrait;
     public GameObject TextBox;
+    public GameObject mDirector;
+    public int ConversationCount;
 
-    void StartConversation(BasePiece currentPiece)
+    void Start()
+    {
+        mDirector = GameObject.Find("GameDirectorPrefab");
+        mDirector.GetComponent<Director>().ContinueConversationScene(this);
+    }
+
+    public void StartConversation(BasePiece currentPiece)
     {
         // Copy in important values from current piece at start of dialogue
         mCurrentPiece = currentPiece.name;
@@ -20,20 +28,31 @@ public class DialogueManager : MonoBehaviour
         
     }
 
-    void PlayerTalking(string dialogue, int[] easa, string voice)
+    public void PlayerTalking(string dialogue, int[] easa, string voice)
     {
         // Called when the player selects dialogue
         TextBox.GetComponent<DisplayText>().AddRavenSpeak(dialogue, voice);
-
     }
 
-    void CharacterTalking(string dialogue)
+    public void PlayerTalkingTest()
+    {
+        TextBox.GetComponent<DisplayText>().AddRavenSpeak("Caw.", "raven itself");
+        StartCoroutine(ShortDelayForTesting());
+    }
+
+    IEnumerator ShortDelayForTesting()
+    {
+      yield return new WaitForSeconds(1);
+      CharacterTalking("Hmm.");
+    }
+
+    public void CharacterTalking(string dialogue)
     {
         TextBox.GetComponent<DisplayText>().AddText(dialogue, mCurrentPiece);
 
     }
 
-    void UpdateEmotion()
+    public void UpdateEmotion()
     {
         // emotional matrix calcs will go here
         // for now we just set it to neutral
@@ -81,16 +100,17 @@ public class DialogueManager : MonoBehaviour
         //Trust
     }
 
-    void EndConversation()
+    public void EndConversation()
     {
         TextBox.GetComponent<DisplayText>().ConversationEnder(mCurrentPiece);
 
         // activate the close button here?
     }
 
-    public void CloseScene()
+    public void CloseConversation()
     {
-        Destroy(this);
+        mDirector.GetComponent<Director>().AllConversationsEnded();
+        Destroy(gameObject, 1);
     }
 
     

@@ -10,6 +10,7 @@ public class PieceManager : MonoBehaviour
     public GameObject mBirdPrefab;
     public GameObject mDirector;
     public GameObject mGameBoard;
+    public GameObject mBirdPiece;
 
     // How's the jarl doing? Is he OK? Nothing else matters if he isn't.
     public bool mIsKingAlive = true;
@@ -82,14 +83,14 @@ public class PieceManager : MonoBehaviour
     {
       // Placing the raven piece and giving it awareness of the jarl. 
 
-      GameObject newPieceObject = Instantiate(mBirdPrefab);
-      newPieceObject.transform.SetParent(transform);
+      mBirdPiece = Instantiate(mBirdPrefab);
+      mBirdPiece.transform.SetParent(transform);
 
       // scale and positioning nonsense
-      newPieceObject.transform.localScale = new Vector3(1,1,1);
-      newPieceObject.transform.localRotation = Quaternion.identity;
+      mBirdPiece.transform.localScale = new Vector3(1,1,1);
+      mBirdPiece.transform.localRotation = Quaternion.identity;
 
-      newPieceObject.GetComponent<Bird>().Setup(this, jarl);
+      mBirdPiece.GetComponent<Bird>().Setup(this, jarl);
 
     }
 
@@ -128,6 +129,7 @@ public class PieceManager : MonoBehaviour
             // Pop that piece in this list and set it up
             newPieces[i] = newPiece;
             newPiece.Setup(teamColor, spriteColor, this);
+            newPieceObject.name = pieceType.ToString();
           } else {
             newPieces[i] = null;
           }
@@ -190,6 +192,16 @@ public class PieceManager : MonoBehaviour
       // Next we're using that boolean variable to set interactivity on the pieces.
       SetInteractive(mWhitePieces, !isEnemyTurn);
       SetInteractive(mBlackPieces, isEnemyTurn);
+
+      if (isEnemyTurn)
+      {
+        PickEnemyPiece();
+      }
+      else
+      {
+        // Bird time!
+        mBirdPiece.GetComponent<Bird>().NewTurn();
+      }
     }
 
     public void ResetPieces()
@@ -276,6 +288,7 @@ public class PieceManager : MonoBehaviour
       }
 
       mReadyPiece.SelectNewSpot("random", "enemy");
+
     }
 
     public int FindMaxVariance(int[] intArray)
@@ -296,4 +309,6 @@ public class PieceManager : MonoBehaviour
       // return the position of the maximum variance piece
       return currentPiece;
     }
+
+
 }

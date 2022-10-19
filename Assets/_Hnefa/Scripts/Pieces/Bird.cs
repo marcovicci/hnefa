@@ -18,6 +18,7 @@ public class Bird : EventTrigger
     public bool isMoving;
     protected RectTransform mRectTransform = null;
     protected PieceManager mPieceManager;
+    public GameObject mDirector;
 
     // Here's where it might get weird. For prototyping I want to be able to manually
     // move the pieces, even though this will never be done in-game.
@@ -49,10 +50,14 @@ public class Bird : EventTrigger
       lr = GetComponent<LineRenderer>();
       energyBar = mPieceManager.GetComponent<BirdEnergy>();
       mRectTransform = GetComponent<RectTransform>();
+      mDirector = GameObject.Find("GameDirectorPrefab");
+
       
       GetComponent<Image>().sprite = Resources.Load<Sprite>("Piece/raven");
 
       Place(mJarl.mCurrentCell);
+
+      EndTurn();
       
     }
 
@@ -166,16 +171,33 @@ public class Bird : EventTrigger
       // Resetting some values
       mBirdEnergy = MaxEnergy;
       mFlightHistory = new List<SingleCell>();
+      Place(mJarl.mCurrentCell);
+    }
+
+    public void EndTurn()
+    {
+      gameObject.SetActive(false);
     }
 
     public void DrawFlightPath()
     {
-      lr.positionCount = mConversationQueue.Count;
-      lr.sortingLayerName = "Line";
-      lr.sortingOrder = 50;
-      foreach (BasePiece piece in mConversationQueue)
+
+      if (mBirdEnergy <= 0)
       {
-        lr.SetPosition(mConversationQueue.IndexOf(piece), piece.gameObject.transform.position);
+        // Turn over, let's get out of here. 
+        mDirector.GetComponent<Director>().StartConversationScene(mConversationQueue);
+        EndTurn();
+
+      }
+      else
+        {
+        //lr.positionCount = mConversationQueue.Count;
+        //lr.sortingLayerName = "Line";
+        //lr.sortingOrder = 50;
+        //foreach (BasePiece piece in mConversationQueue)
+        //{
+        //  lr.SetPosition(mConversationQueue.IndexOf(piece), piece.gameObject.transform.position);
+        //}
       }
     }
 

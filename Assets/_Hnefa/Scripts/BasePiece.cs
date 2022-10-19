@@ -318,6 +318,10 @@ public class BasePiece : EventTrigger
       // Vertical movement
       CheckTaking(0, 1, mMovement.y);
       CheckTaking(0, -1, mMovement.y);
+
+      // Switch sides now
+
+      mPieceManager.SwitchSides(mColor);
     }
 
     // Calculating total variance for this piece
@@ -374,7 +378,7 @@ public class BasePiece : EventTrigger
 
           if (mTargetCell != null)
           {
-            Move();
+            StartCoroutine(ShortDelay());
           }
           else
           {
@@ -385,5 +389,11 @@ public class BasePiece : EventTrigger
         
 
       }
+    }
+
+    IEnumerator ShortDelay()
+    {
+      yield return new WaitForSeconds(1);
+      Move();
     }
 }
