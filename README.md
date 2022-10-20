@@ -19,6 +19,14 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 20/10/2022
+
+DAWN OF THE FINAL DAY\
+24 HOURS REMAIN\
+I added fonts and linked up, like, the whole game. Don't worry about it. The fonts are nice.\
+Gameplay loop COMPLETE! Sort of.\
+Feel free to watch [the technical demonstration video on Youtube](https://www.youtube.com/watch?v=1UPW7-cijK0) if you want a squiz.
+
 #### 19/10/2022
 
 Added sprites, death icons and regular icons for all board pieces.\
