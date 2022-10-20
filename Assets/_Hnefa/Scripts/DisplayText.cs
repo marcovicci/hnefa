@@ -61,5 +61,6 @@ public class DisplayText : MonoBehaviour
     public void ClearConversationHistory()
     {
         List<string> mTextHistory = new List<string>();
+        mText.text = "";
     }
 }

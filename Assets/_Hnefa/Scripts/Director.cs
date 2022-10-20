@@ -54,7 +54,17 @@ public class Director : MonoBehaviour
 
     public void ContinueConversationScene(DialogueManager window)
     {
-      // Fetch dialogue window
+
+      Debug.Log(mConversationQueue.Count);
+
+      if (mConversationQueue.Count == 0)
+      {
+        AllConversationsEnded();
+      }
+
+      else
+      {
+        // Fetch dialogue window
       DialogueWindow = window;
 
       // Send next character to dialogue window
@@ -62,11 +72,27 @@ public class Director : MonoBehaviour
 
       // Pop it off the list
       mConversationQueue.RemoveAt(0);
+
+      }
+
     }
 
     public void AllConversationsEnded()
     {
-      // This will be called before the dialogue manager deletes itself, to continue the flow of the game.
+      Destroy(DialogueWindow.gameObject);
+      // This will be called when the dialogue manager deletes itself, to continue the flow of the game.
       TakeAlliedMove();
+    }
+
+    public void HijackBird()
+    {
+      // This is so, so silly. 
+      // The bird is created on game start so it's easier to kind of contact it here for a button event.
+      mPieceManager.mBirdPiece.GetComponent<Bird>().EndTurn();
+    }
+
+    public void OpenPauseMenu()
+    {
+      SceneManager.LoadScene("OptionsMenu", LoadSceneMode.Additive);
     }
 }

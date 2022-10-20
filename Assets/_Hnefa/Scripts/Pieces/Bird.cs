@@ -29,7 +29,7 @@ public class Bird : EventTrigger
     public List<int> mMovementCost = new List<int>();
     protected SingleCell mTargetCell = null;
 
-    public int MaxEnergy = 10;
+    public int MaxEnergy = 5;
     public int mBirdEnergy;
     public int mCurrentCost = 0;
 
@@ -43,6 +43,7 @@ public class Bird : EventTrigger
 
     public virtual void Setup(PieceManager newPieceManager, BasePiece newJarl)
     {
+      MaxEnergy = 5;
       mBirdEnergy = MaxEnergy;
       mJarl = newJarl;
       mPieceManager = newPieceManager;
@@ -56,8 +57,6 @@ public class Bird : EventTrigger
       GetComponent<Image>().sprite = Resources.Load<Sprite>("Piece/raven");
 
       Place(mJarl.mCurrentCell);
-
-      EndTurn();
       
     }
 
@@ -69,7 +68,7 @@ public class Bird : EventTrigger
 
       // Positioning this piece
       transform.position = newCell.transform.position;
-      gameObject.SetActive(true);
+      gameObject.SetActive(false);
     }
 
     private void CreateCellPath(int xDirection, int yDirection, int movement)
@@ -105,8 +104,25 @@ public class Bird : EventTrigger
         // The bird can only land on a friendly piece.
         if (mCellState == CellState.Friendly)
         {
-          mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX,currentY]);
-          mMovementCost.Add(i);
+          var FreshCharacter = true;
+          // We have to check that this character isn't currently in the conversation queue already.
+          foreach (BasePiece piece in mConversationQueue)
+          {
+            // Absolutely disgostang but it's 6pm the night before handin
+            // and i was just asked to make a somewhat major change
+            // so i'm over it
+            if (mCurrentCell.mBoard.mAllCells[currentX,currentY].mCurrentPiece == piece)
+            {
+              FreshCharacter = false;
+            }
+          }
+
+          if (FreshCharacter)
+          {
+            mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX,currentY]);
+            mMovementCost.Add(i);
+          }
+          
         }
 
       }
@@ -127,12 +143,24 @@ public class Bird : EventTrigger
 
       // Using a Vector3Int instead of a Vector2Int you can also handle
       // diagonal movement, which is necessary for the bird!
-
       // Diagonal movement code follows...
       CreateCellPath(1, 1, mBirdEnergy);
       CreateCellPath(-1, 1, mBirdEnergy);
       CreateCellPath(-1, -1, mBirdEnergy);
       CreateCellPath(1, -1, mBirdEnergy);
+
+      // At 6 PM the day before hand-in Matthew suddenly noticed 
+      // the bird moves in these 8 directions and made me change it. 
+      // So this is my attempt to create the ability to move to pieces which are not
+      // in a cardinal direction but maybe more wiggly.
+      CreateCellPath(2, 1, mBirdEnergy);
+      CreateCellPath(2, -1, mBirdEnergy);
+      CreateCellPath(-2, 1, mBirdEnergy);
+      CreateCellPath(-2, -1, mBirdEnergy);
+      CreateCellPath(1, 2, mBirdEnergy);
+      CreateCellPath(1, -2, mBirdEnergy);
+      CreateCellPath(-1, 2, mBirdEnergy);
+      CreateCellPath(-1, -2, mBirdEnergy);
     }
 
     protected void ShowCells()
@@ -170,12 +198,23 @@ public class Bird : EventTrigger
     {
       // Resetting some values
       mBirdEnergy = MaxEnergy;
+      energyBar.SetEnergy(mBirdEnergy);
+      mConversationQueue = new List<BasePiece>();
       mFlightHistory = new List<SingleCell>();
       Place(mJarl.mCurrentCell);
+      gameObject.SetActive(true);
     }
 
     public void EndTurn()
     {
+      if (mConversationQueue.Count > 0)
+      {
+        mDirector.GetComponent<Director>().StartConversationScene(mConversationQueue);
+      }
+      else {
+        // No conversations, skip straight to taking an allied move
+        mDirector.GetComponent<Director>().TakeAlliedMove();
+      }
       gameObject.SetActive(false);
     }
 
@@ -185,7 +224,6 @@ public class Bird : EventTrigger
       if (mBirdEnergy <= 0)
       {
         // Turn over, let's get out of here. 
-        mDirector.GetComponent<Director>().StartConversationScene(mConversationQueue);
         EndTurn();
 
       }

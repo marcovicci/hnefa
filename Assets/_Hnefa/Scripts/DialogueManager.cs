@@ -10,6 +10,14 @@ public class DialogueManager : MonoBehaviour
     public GameObject TextBox;
     public GameObject mDirector;
     public int ConversationCount;
+    public string[] AllEmotions = new string[26]
+    {"Aggressive","Alarm","Anger","Anxiety","Aware",
+    "Contempt","Curiosity","Cynicism","Delight","Despair",
+    "Disappointed","Disbelief","Disgust","Distracted","Dominance",
+    "Envy","Fear","Guilty","Happy","Love",
+    "Morbidity","Neutral","Nostalgic","Optimism","Outrage",
+    "Pessimistic"
+    };
 
     void Start()
     {
@@ -19,6 +27,8 @@ public class DialogueManager : MonoBehaviour
 
     public void StartConversation(BasePiece currentPiece)
     {
+        TextBox.GetComponent<DisplayText>().ClearConversationHistory();
+        CharacterPortrait.GetComponent<CharacterSpriteDisplay>().ShowCorrectEmotion("Neutral");
         // Copy in important values from current piece at start of dialogue
         mCurrentPiece = currentPiece.name;
         mCurrentEASA = currentPiece.mCurrentEASA;
@@ -37,13 +47,14 @@ public class DialogueManager : MonoBehaviour
     public void PlayerTalkingTest()
     {
         TextBox.GetComponent<DisplayText>().AddRavenSpeak("Caw.", "raven itself");
-        StartCoroutine(ShortDelayForTesting());
+        StartCoroutine(ShortDelayForTesting());    
     }
 
     IEnumerator ShortDelayForTesting()
     {
       yield return new WaitForSeconds(1);
       CharacterTalking("Hmm.");
+      UpdateEmotion();
     }
 
     public void CharacterTalking(string dialogue)
@@ -56,11 +67,11 @@ public class DialogueManager : MonoBehaviour
     {
         // emotional matrix calcs will go here
         // for now we just set it to neutral
-        var EmotionalResult = "Neutral";
+        var EmotionalResult = AllEmotions[Random.Range(0, AllEmotions.Length)];
 
         // Adjust character EASA values here (in a separate function perhaps?)
         // To display any emotional change...
-        TextBox.GetComponent<DisplayText>().EmotionChange(mCurrentPiece, EmotionalResult);
+        //TextBox.GetComponent<DisplayText>().EmotionChange(mCurrentPiece, EmotionalResult);
 
         CharacterPortrait.GetComponent<CharacterSpriteDisplay>().ShowCorrectEmotion(EmotionalResult);
 
@@ -110,7 +121,11 @@ public class DialogueManager : MonoBehaviour
     public void CloseConversation()
     {
         mDirector.GetComponent<Director>().AllConversationsEnded();
-        Destroy(gameObject, 1);
+    }
+
+    public void NextConversation()
+    {
+        mDirector.GetComponent<Director>().ContinueConversationScene(this);
     }
 
     
