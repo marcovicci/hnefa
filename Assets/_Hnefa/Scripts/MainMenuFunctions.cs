@@ -20,4 +20,9 @@ public class MainMenuFunctions : MonoBehaviour
       // Currently identical to NewGame lol
       NewGame();
     }
+
+    public void ResumeGame()
+    {
+      Destroy(gameObject);
+    }
 }

@@ -7,8 +7,10 @@ public class PieceManager : MonoBehaviour
 {
     // here be references
     public GameObject mPiecePrefab;
+    public GameObject mBirdPrefab;
     public GameObject mDirector;
     public GameObject mGameBoard;
+    public GameObject mBirdPiece;
 
     // How's the jarl doing? Is he OK? Nothing else matters if he isn't.
     public bool mIsKingAlive = true;
@@ -77,6 +79,21 @@ public class PieceManager : MonoBehaviour
 
     }
 
+    public void MakeBird(BasePiece jarl)
+    {
+      // Placing the raven piece and giving it awareness of the jarl. 
+
+      mBirdPiece = Instantiate(mBirdPrefab);
+      mBirdPiece.transform.SetParent(transform);
+
+      // scale and positioning nonsense
+      mBirdPiece.transform.localScale = new Vector3(1,1,1);
+      mBirdPiece.transform.localRotation = Quaternion.identity;
+
+      mBirdPiece.GetComponent<Bird>().Setup(this, jarl);
+
+    }
+
     private BasePiece[] CreatePieces(Color teamColor, Color32 spriteColor, GameBoard mBoard)
     {
       BasePiece[] newPieces = new BasePiece[121];
@@ -112,6 +129,7 @@ public class PieceManager : MonoBehaviour
             // Pop that piece in this list and set it up
             newPieces[i] = newPiece;
             newPiece.Setup(teamColor, spriteColor, this);
+            newPieceObject.name = pieceType.ToString();
           } else {
             newPieces[i] = null;
           }
@@ -174,6 +192,16 @@ public class PieceManager : MonoBehaviour
       // Next we're using that boolean variable to set interactivity on the pieces.
       SetInteractive(mWhitePieces, !isEnemyTurn);
       SetInteractive(mBlackPieces, isEnemyTurn);
+
+      if (isEnemyTurn)
+      {
+        PickEnemyPiece();
+      }
+      else
+      {
+        // Bird time!
+        mBirdPiece.GetComponent<Bird>().NewTurn();
+      }
     }
 
     public void ResetPieces()
@@ -212,6 +240,31 @@ public class PieceManager : MonoBehaviour
       int currentPiece = FindMaxVariance(mPieceVariance);
 
       mReadyPiece = mWhitePieces[currentPiece];
+
+      mReadyPiece.SelectNewSpot("random", "allied");
+    }
+
+    public void PickRandomAlliedPiece()
+    {
+      int max = 1;
+      mReadyPiece = null;
+  
+      // Function to choose the next black piece to move.
+      for (int i = 0; i < mWhitePieces.Length; i++)
+      {
+        if (mWhitePieces[i] != null)
+        {
+          int currentRandom = UnityEngine.Random.Range(1,1000);
+          if (currentRandom > max) 
+          {
+            // put this as the new maximum
+            max = currentRandom;
+            mReadyPiece = mWhitePieces[i];
+          }
+        }
+      }
+
+      mReadyPiece.SelectNewSpot("random", "allied");
     }
 
     public void PickEnemyPiece()
@@ -233,6 +286,9 @@ public class PieceManager : MonoBehaviour
           }
         }
       }
+
+      mReadyPiece.SelectNewSpot("random", "enemy");
+
     }
 
     public int FindMaxVariance(int[] intArray)
@@ -253,4 +309,6 @@ public class PieceManager : MonoBehaviour
       // return the position of the maximum variance piece
       return currentPiece;
     }
+
+
 }

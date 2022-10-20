@@ -15,25 +15,49 @@ public class Bird : EventTrigger
     public SingleCell mOriginalCell = null;
     public SingleCell mCurrentCell = null;
     public BasePiece mJarl = null;
+    public bool isMoving;
     protected RectTransform mRectTransform = null;
     protected PieceManager mPieceManager;
+    public GameObject mDirector;
 
     // Here's where it might get weird. For prototyping I want to be able to manually
     // move the pieces, even though this will never be done in-game.
     // So I will be starting with Andrew Connell's system to drag pieces around the board.
     protected Vector3Int mMovement = new Vector3Int(10, 10, 0);
     public List<SingleCell> mHighlightedCells = new List<SingleCell>();
+    public List<SingleCell> mFlightHistory = new List<SingleCell>();
+    public List<int> mMovementCost = new List<int>();
     protected SingleCell mTargetCell = null;
 
-    public float mBirdEnergy = 10.0f;
+    public int MaxEnergy = 5;
+    public int mBirdEnergy;
+    public int mCurrentCost = 0;
+
+    // reference to energy script from Sarah Bridge
+    public BirdEnergy energyBar;
+
+    // line rendering nonsense
+    public LineRenderer lr; 
+
+    public List<BasePiece> mConversationQueue = new List<BasePiece>();
 
     public virtual void Setup(PieceManager newPieceManager, BasePiece newJarl)
     {
+      MaxEnergy = 5;
+      mBirdEnergy = MaxEnergy;
       mJarl = newJarl;
       mPieceManager = newPieceManager;
+      isMoving = false;
+      lr = GetComponent<LineRenderer>();
+      energyBar = mPieceManager.GetComponent<BirdEnergy>();
       mRectTransform = GetComponent<RectTransform>();
-      // TODO - get the Jarl's position after he's set up and move to it
+      mDirector = GameObject.Find("GameDirectorPrefab");
 
+      
+      GetComponent<Image>().sprite = Resources.Load<Sprite>("Piece/raven");
+
+      Place(mJarl.mCurrentCell);
+      
     }
 
     public void Place(SingleCell newCell)
@@ -44,7 +68,7 @@ public class Bird : EventTrigger
 
       // Positioning this piece
       transform.position = newCell.transform.position;
-      gameObject.SetActive(true);
+      gameObject.SetActive(false);
     }
 
     private void CreateCellPath(int xDirection, int yDirection, int movement)
@@ -80,7 +104,25 @@ public class Bird : EventTrigger
         // The bird can only land on a friendly piece.
         if (mCellState == CellState.Friendly)
         {
-          mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX,currentY]);
+          var FreshCharacter = true;
+          // We have to check that this character isn't currently in the conversation queue already.
+          foreach (BasePiece piece in mConversationQueue)
+          {
+            // Absolutely disgostang but it's 6pm the night before handin
+            // and i was just asked to make a somewhat major change
+            // so i'm over it
+            if (mCurrentCell.mBoard.mAllCells[currentX,currentY].mCurrentPiece == piece)
+            {
+              FreshCharacter = false;
+            }
+          }
+
+          if (FreshCharacter)
+          {
+            mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX,currentY]);
+            mMovementCost.Add(i);
+          }
+          
         }
 
       }
@@ -92,21 +134,33 @@ public class Bird : EventTrigger
       // It's a little ugly but works fine.
 
       // Horizontal movement
-      CreateCellPath(1, 0, mMovement.x);
-      CreateCellPath(-1, 0, mMovement.x);
+      CreateCellPath(1, 0, mBirdEnergy);
+      CreateCellPath(-1, 0, mBirdEnergy);
 
       // Vertical movement
-      CreateCellPath(0, 1, mMovement.y);
-      CreateCellPath(0, -1, mMovement.y);
+      CreateCellPath(0, 1, mBirdEnergy);
+      CreateCellPath(0, -1, mBirdEnergy);
 
       // Using a Vector3Int instead of a Vector2Int you can also handle
       // diagonal movement, which is necessary for the bird!
-
       // Diagonal movement code follows...
-      CreateCellPath(1, 1, mMovement.z);
-      CreateCellPath(-1, 1, mMovement.z);
-      CreateCellPath(-1, -1, mMovement.z);
-      CreateCellPath(1, -1, mMovement.z);
+      CreateCellPath(1, 1, mBirdEnergy);
+      CreateCellPath(-1, 1, mBirdEnergy);
+      CreateCellPath(-1, -1, mBirdEnergy);
+      CreateCellPath(1, -1, mBirdEnergy);
+
+      // At 6 PM the day before hand-in Matthew suddenly noticed 
+      // the bird moves in these 8 directions and made me change it. 
+      // So this is my attempt to create the ability to move to pieces which are not
+      // in a cardinal direction but maybe more wiggly.
+      CreateCellPath(2, 1, mBirdEnergy);
+      CreateCellPath(2, -1, mBirdEnergy);
+      CreateCellPath(-2, 1, mBirdEnergy);
+      CreateCellPath(-2, -1, mBirdEnergy);
+      CreateCellPath(1, 2, mBirdEnergy);
+      CreateCellPath(1, -2, mBirdEnergy);
+      CreateCellPath(-1, 2, mBirdEnergy);
+      CreateCellPath(-1, -2, mBirdEnergy);
     }
 
     protected void ShowCells()
@@ -124,7 +178,7 @@ public class Bird : EventTrigger
       // Changing color of cells back to white.
 
       foreach (SingleCell cell in mHighlightedCells)
-          cell.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+          cell.GetComponent<Image>().color = new Color32(188, 168, 151, 255);
       // I can't remember the last time I used a foreach like this
       // and the lack of curly brackets makes me so uncomfortable.
       mHighlightedCells.Clear();
@@ -140,76 +194,118 @@ public class Bird : EventTrigger
       mTargetCell = null;
     }
 
-    public override void OnBeginDrag(PointerEventData eventData)
+    public void NewTurn()
     {
-      // Here come those drag events!
-      // What a drag!
-      // Haha.
-      // I've been dizzy and nauseous for four days straight so this is my sense of humor now.
-      // I also need you to know my t key popped off the keyboard so I've been copying and pasting it as I code.
-      // Anyway, this is why we inherit from the EventTrigger class allll the way up there.
+      // Resetting some values
+      mBirdEnergy = MaxEnergy;
+      energyBar.SetEnergy(mBirdEnergy);
+      mConversationQueue = new List<BasePiece>();
+      mFlightHistory = new List<SingleCell>();
+      Place(mJarl.mCurrentCell);
+      gameObject.SetActive(true);
+    }
 
-      base.OnBeginDrag(eventData);
+    public void EndTurn()
+    {
+      if (mConversationQueue.Count > 0)
+      {
+        mDirector.GetComponent<Director>().StartConversationScene(mConversationQueue);
+      }
+      else {
+        // No conversations, skip straight to taking an allied move
+        mDirector.GetComponent<Director>().TakeAlliedMove();
+      }
+      gameObject.SetActive(false);
+    }
 
+    public void DrawFlightPath()
+    {
+
+      if (mBirdEnergy <= 0)
+      {
+        // Turn over, let's get out of here. 
+        EndTurn();
+
+      }
+      else
+        {
+        //lr.positionCount = mConversationQueue.Count;
+        //lr.sortingLayerName = "Line";
+        //lr.sortingOrder = 50;
+        //foreach (BasePiece piece in mConversationQueue)
+        //{
+        //  lr.SetPosition(mConversationQueue.IndexOf(piece), piece.gameObject.transform.position);
+        //}
+      }
+    }
+
+    public override void OnPointerClick(PointerEventData eventData)
+    {
+      if (isMoving)
+      {
+        Debug.Log("is moving");
+        foreach (SingleCell cell in mHighlightedCells)
+        {
+          if (RectTransformUtility.RectangleContainsScreenPoint(cell.mRectTransform, Input.mousePosition))
+          {
+            mTargetCell = cell;
+            // Grabs the 'cost' of moving to this cell, sets it to current cell
+            mCurrentCost = mMovementCost[mHighlightedCells.IndexOf(cell)];
+            Debug.Log("breaking");
+            break;
+          }
+          Debug.Log("did not break");
+          // We break up there to avoid repeated calls so we don't even
+          // need an 'else' statement here. But this is basically our 'else'.
+          mTargetCell = null;
+        }
+
+        // Clears those red cells from earlier.
+        ClearCells();
+
+        // Here's our code for snapping to the grid.
+        // If we haven't got a new target cell from this event,
+        // just snap back to the original cell.
+        // Otherwise we can call that move event we made earlier.
+        // Instead of an else statement here you can also 'return;' after setting
+        // the transform position, but I can't figure out if it's preferable
+        // so I'm using if / else for readability.
+
+        if (!mTargetCell)
+        {
+          transform.position = mCurrentCell.gameObject.transform.position;
+        }
+        else
+        {
+          Move();
+
+          //If we move successfully, we also want to do resource stuff here...
+          mBirdEnergy -= mCurrentCost;
+          Debug.Log("Movement cost " + mCurrentCost + " and energy is now " + mBirdEnergy);
+          energyBar.SetEnergy(mBirdEnergy);
+
+          // Add the piece on this square to the conversation queue
+          mConversationQueue.Add(mCurrentCell.mCurrentPiece);
+
+          isMoving = false;
+          DrawFlightPath();
+        }
+      }
+      else
+      {
+
+     
+      
       // Checking for all those possible cells
       CheckPathing();
 
       //Making them red so we can see them
       ShowCells();
+
+      isMoving = true;
+
+      }
+      
     }
 
-    public override void OnDrag(PointerEventData eventData)
-    {
-      // Meanwhile this function makes the piece follow your mouse cursor.
-      // As you can imagine, this won't be useful in real Hnefa. Bah.
-      // But it will later have bits repurposed below - for retargeting.
-      base.OnDrag(eventData);
-      transform.position += (Vector3)eventData.delta;
-
-      // Here's that retargeting code.
-      // It checks our valid moves and sees if our mouse is in any of them.
-      // It's such a cute little solution that I'm gonna be sad when I have to gut it
-      // and make the AI figure this stuff out instead.
-      foreach (SingleCell cell in mHighlightedCells)
-      {
-        if (RectTransformUtility.RectangleContainsScreenPoint(cell.mRectTransform, Input.mousePosition))
-        {
-          mTargetCell = cell;
-          break;
-        }
-
-        // We break up there to avoid repeated calls so we don't even
-        // need an 'else' statement here. But this is basically our 'else'.
-        mTargetCell = null;
-      }
-    }
-
-    public override void OnEndDrag(PointerEventData eventData)
-    {
-      base.OnEndDrag(eventData);
-
-      // Clears those red cells from earlier.
-      ClearCells();
-
-      // Here's our code for snapping to the grid.
-      // If we haven't got a new target cell from this dragging event,
-      // just snap back to the original cell.
-      // Otherwise we can call that move event we made earlier.
-      // Instead of an else statement here you can also 'return;' after setting
-      // the transform position, but I can't figure out if it's preferable
-      // so I'm using if / else for readability.
-
-      if (!mTargetCell)
-      {
-        transform.position = mCurrentCell.gameObject.transform.position;
-      }
-      else
-      {
-        Move();
-
-        //If we move successfully, we also want to do resource stuff here...
-        // TODO
-      }
-
-    }
 }

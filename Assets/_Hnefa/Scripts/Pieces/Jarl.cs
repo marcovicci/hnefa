@@ -13,8 +13,11 @@ public class Jarl : BasePiece
       // Stuff specific to this piece.
       // First we're telling our base class we are the jarl.
       base.IsKing();
+
+      // Sending our position to the piece manager to place the bird.
+
       // By putting a file in the Resources folder we could load it here as a sprite.
-      // GetComponent<Image>().sprite = Resources.Load<Sprite>("File_Name")
+      GetComponent<Image>().sprite = Resources.Load<Sprite>("Piece/jarl");
     }
 
     // We have to override the Kill() function as well, just to make sure killing the Jarl is a loss
@@ -38,6 +41,12 @@ public class Jarl : BasePiece
           mPieceManager.mDirector.GetComponent<Simulator>().mIsKingAlive = false;
         }
       }
+    }
+
+    public override void Place(SingleCell newCell)
+    {
+      base.Place(newCell);
+      mPieceManager.MakeBird(this);
     }
 
     public override void Move()

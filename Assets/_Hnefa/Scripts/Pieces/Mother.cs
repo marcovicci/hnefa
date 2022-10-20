@@ -12,6 +12,6 @@ public class Mother : BasePiece
 
       // Stuff specific to this piece.
       // By putting a file in the Resources folder we could load it here as a sprite.
-      // GetComponent<Image>().sprite = Resources.Load<Sprite>("File_Name")
+      GetComponent<Image>().sprite = Resources.Load<Sprite>("Piece/mother");
     }
 }

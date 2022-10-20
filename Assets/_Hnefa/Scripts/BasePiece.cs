@@ -21,6 +21,7 @@ public class BasePiece : EventTrigger
     public bool mIsVirtual = false;
 
     // EASA variables
+    // Empathy, Aptitude, Sensitivity, and Awareness
     public int[] mCurrentEASA = new int[4];
     public int mTotalVariance;
 
@@ -49,11 +50,11 @@ public class BasePiece : EventTrigger
     {
       mPieceManager = newPieceManager;
       mColor = newTeamColor;
-      GetComponent<Image>().color = newSpriteColor;
+      //GetComponent<Image>().color = newSpriteColor;
       mRectTransform = GetComponent<RectTransform>();
     }
 
-    public void Place(SingleCell newCell)
+    public virtual void Place(SingleCell newCell)
     {
       // Taking values from the cell and telling it which piece is where
       mCurrentCell = newCell;
@@ -317,79 +318,10 @@ public class BasePiece : EventTrigger
       // Vertical movement
       CheckTaking(0, 1, mMovement.y);
       CheckTaking(0, -1, mMovement.y);
-    }
 
-    public override void OnBeginDrag(PointerEventData eventData)
-    {
-      // Here come those drag events!
-      // What a drag!
-      // Haha.
-      // I've been dizzy and nauseous for four days straight so this is my sense of humor now.
-      // I also need you to know my t key popped off the keyboard so I've been copying and pasting it as I code.
-      // Anyway, this is why we inherit from the EventTrigger class allll the way up there.
+      // Switch sides now
 
-      base.OnBeginDrag(eventData);
-
-      // Checking for all those possible cells
-      CheckPathing();
-
-      //Making them red so we can see them
-      ShowCells();
-    }
-
-    public override void OnDrag(PointerEventData eventData)
-    {
-      // Meanwhile this function makes the piece follow your mouse cursor.
-      // As you can imagine, this won't be useful in real Hnefa. Bah.
-      // But it will later have bits repurposed below - for retargeting.
-      base.OnDrag(eventData);
-      transform.position += (Vector3)eventData.delta;
-
-      // Here's that retargeting code.
-      // It checks our valid moves and sees if our mouse is in any of them.
-      // It's such a cute little solution that I'm gonna be sad when I have to gut it
-      // and make the AI figure this stuff out instead.
-      foreach (SingleCell cell in mHighlightedCells)
-      {
-        if (RectTransformUtility.RectangleContainsScreenPoint(cell.mRectTransform, Input.mousePosition))
-        {
-          mTargetCell = cell;
-          break;
-        }
-
-        // We break up there to avoid repeated calls so we don't even
-        // need an 'else' statement here. But this is basically our 'else'.
-        mTargetCell = null;
-      }
-    }
-
-    public override void OnEndDrag(PointerEventData eventData)
-    {
-      base.OnEndDrag(eventData);
-
-      // Clears those red cells from earlier.
-      ClearCells();
-
-      // Here's our code for snapping to the grid.
-      // If we haven't got a new target cell from this dragging event,
-      // just snap back to the original cell.
-      // Otherwise we can call that move event we made earlier.
-      // Instead of an else statement here you can also 'return;' after setting
-      // the transform position, but I can't figure out if it's preferable
-      // so I'm using if / else for readability.
-
-      if (!mTargetCell)
-      {
-        transform.position = mCurrentCell.gameObject.transform.position;
-      }
-      else
-      {
-        Move();
-
-        //If we move successfully, we also want to switch sides.
-        mPieceManager.SwitchSides(mColor);
-      }
-
+      mPieceManager.SwitchSides(mColor);
     }
 
     // Calculating total variance for this piece
@@ -408,7 +340,7 @@ public class BasePiece : EventTrigger
         return mTotalVariance;
     }
 
-    public void SelectNewSpot(string mode="random")
+    public void SelectNewSpot(string mode="random", string side="allied")
     {
       if (mode == "random")
       {
@@ -418,19 +350,50 @@ public class BasePiece : EventTrigger
 
         CheckPathing();
 
-        foreach (SingleCell cell in mHighlightedCells)
+        // safety for if there are NO possible moves
+        if (mHighlightedCells.Count == 0)
         {
-          int currentRandom = UnityEngine.Random.Range(1,1000);
-          if (currentRandom > max) 
+          // go back and select another piece!
+          if (side == "allied")
           {
-            // put this as the new maximum
-            max = currentRandom;
-            mTargetCell = cell;
+            mPieceManager.PickRandomAlliedPiece();
+          }
+          else
+          {
+            mPieceManager.PickEnemyPiece();
           }
         }
+        else 
+        {
+          foreach (SingleCell cell in mHighlightedCells)
+          {
+            int currentRandom = UnityEngine.Random.Range(1,1000);
+            if (currentRandom > max) 
+            {
+              // put this as the new maximum
+              max = currentRandom;
+              mTargetCell = cell;
+            }
+          }
 
-        Move();
+          if (mTargetCell != null)
+          {
+            StartCoroutine(ShortDelay());
+          }
+          else
+          {
+            // disgusting loop for safety
+            SelectNewSpot(mode, side);
+          }
+        }
+        
 
       }
+    }
+
+    IEnumerator ShortDelay()
+    {
+      yield return new WaitForSeconds(1);
+      Move();
     }
 }
