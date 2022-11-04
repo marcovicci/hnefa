@@ -11,6 +11,8 @@ public class Director : MonoBehaviour
     public PieceManager mPieceManager;
     public DialogueManager DialogueWindow;
     public List<BasePiece> mConversationQueue;
+    public GameObject mSkipButton;
+    private bool mSkippable = false;
 
     void Start()
     {
@@ -34,6 +36,18 @@ public class Director : MonoBehaviour
         // ... code for non-random piece selection based on variance
         mPieceManager.PickAlliedPiece();
       }
+    }
+
+    public void SkipButtonHandler()
+    {
+      // Code for activating and deactivating the skip button when appropriate.
+      // First, reverse the current value of mSkippable.
+      mSkippable = !mSkippable;
+      // Next, set the skip button using this value.
+      mSkipButton.SetActive(mSkippable);
+      // This means that if Skippable was true (default), and you hit the skip button, it disappears.
+      // If Skippable was false, and this function is called at the end of the turn, it reappears.
+      // Yay! 
     }
 
     public void TakeEnemyMove()
@@ -89,6 +103,8 @@ public class Director : MonoBehaviour
       // This is so, so silly. 
       // The bird is created on game start so it's easier to kind of contact it here for a button event.
       mPieceManager.mBirdPiece.GetComponent<Bird>().EndTurn();
+      // Also toggle the skip button off.
+      SkipButtonHandler();
     }
 
     public void OpenPauseMenu()
