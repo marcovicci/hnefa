@@ -19,6 +19,12 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 05/11/2022
+
+Pre-exposure bugfix!\
+The skip/next button now toggles off after use, until the next turn when you can use it again.\
+This prevents breaking the game by mashing it too fast.
+
 #### 20/10/2022
 
 DAWN OF THE FINAL DAY\

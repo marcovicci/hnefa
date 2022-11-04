@@ -203,6 +203,9 @@ public class Bird : EventTrigger
       mFlightHistory = new List<SingleCell>();
       Place(mJarl.mCurrentCell);
       gameObject.SetActive(true);
+      
+      // Also toggle the skip button on.
+      mDirector.GetComponent<Director>().SkipButtonHandler();
     }
 
     public void EndTurn()
