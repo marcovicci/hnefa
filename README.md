@@ -23,7 +23,8 @@ Open it and click "Add Project".
 
 Pre-exposure bugfix!\
 The skip/next button now toggles off after use, until the next turn when you can use it again.\
-This prevents breaking the game by mashing it too fast.
+This prevents breaking the game by mashing it too fast.\
+Added HNEFA_BUILD.ZIP; current game build for Windows is in there.
 
 #### 20/10/2022
 
