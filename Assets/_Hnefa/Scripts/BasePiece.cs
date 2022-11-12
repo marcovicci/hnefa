@@ -46,6 +46,9 @@ public class BasePiece : EventTrigger
     // On that note here's a variable for the cell we're "moving to" right now.
     protected SingleCell mTargetCell = null;
 
+    // Current conversation line we're on...
+    public int mDialogueState = 0;
+
     public virtual void Setup(Color newTeamColor, Color32 newSpriteColor, PieceManager newPieceManager)
     {
       mPieceManager = newPieceManager;

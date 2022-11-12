@@ -19,6 +19,13 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 13/11/2022
+
+Post-exposure bugfix and feature expansion! I'm deranged!\
+Basic dialogue is implemented for all characters. Characters will simply cycle through their dialogue lines when you interact with them.\
+"New Game" button added to Options menu, to quickly restart.\
+HNEFA_BUILD.ZIP updated accordingly.
+
 #### 05/11/2022
 
 Pre-exposure bugfix!\
