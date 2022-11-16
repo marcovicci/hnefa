@@ -19,6 +19,13 @@ Open it and click "Add Project".
 
 ## patch notes
 
+#### 16/11/2022
+
+Post-exposure but pre-Industry Night feature expansion... kinda.\
+"How to Play" and "About Hnefa" pages have been added to the menu.\
+Also added a visual difference to the "exit" squares at the corner of the board.\
+HNEFA_BUILD.ZIP updated accordingly.
+
 #### 13/11/2022
 
 Post-exposure bugfix and feature expansion! I'm deranged!\
