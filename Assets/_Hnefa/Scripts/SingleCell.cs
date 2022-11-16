@@ -24,6 +24,10 @@ public class SingleCell : MonoBehaviour
     //[HideInInspector]
     public BasePiece mCurrentPiece = null;
 
+    public GameObject mountainSprite;
+    public GameObject escapeSprite;
+    public GameObject fortSprite;
+
     //Couple ridiculous booleans for special types of tiles.
     // Only the first one can be changed during the game, the other two happen on board creation.
     public bool mDeathHappenedHere = false;
@@ -47,6 +51,8 @@ public class SingleCell : MonoBehaviour
       || mBoardPosition == new Vector2Int(10,10))
       {
         mIsCorner = true;
+        escapeSprite.SetActive(true);
+        escapeSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(mnCellSize-5, mnCellSize-5);
       }
 
       if (mBoardPosition == new Vector2Int(5, 5))
